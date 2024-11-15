@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/treebank-template/static/css/main.5c67adbc.chunk.css",
-    "main.js": "/treebank-template/static/js/main.6c5c6e3f.chunk.js",
-    "main.js.map": "/treebank-template/static/js/main.6c5c6e3f.chunk.js.map",
+    "main.js": "/treebank-template/static/js/main.a1b8c488.chunk.js",
+    "main.js.map": "/treebank-template/static/js/main.a1b8c488.chunk.js.map",
     "runtime-main.js": "/treebank-template/static/js/runtime-main.cbb5f2e6.js",
     "runtime-main.js.map": "/treebank-template/static/js/runtime-main.cbb5f2e6.js.map",
     "static/css/2.4e5ca7f1.chunk.css": "/treebank-template/static/css/2.4e5ca7f1.chunk.css",
@@ -55,6 +55,6 @@
     "static/css/2.4e5ca7f1.chunk.css",
     "static/js/2.1953b79d.chunk.js",
     "static/css/main.5c67adbc.chunk.css",
-    "static/js/main.6c5c6e3f.chunk.js"
+    "static/js/main.a1b8c488.chunk.js"
   ]
 }
