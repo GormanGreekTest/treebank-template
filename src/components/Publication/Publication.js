@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { chunksType, publicationMatchType, locationType } from '../../lib/types';
@@ -7,8 +6,8 @@ import { chunksType, publicationMatchType, locationType } from '../../lib/types'
 import styles from './Publication.module.css';
 
 import Header from '../Header';
+import ArethusaWrapper from '../ArethusaWrapper';
 import Treebank from '../Treebank';
-import Alignment from '../Alignment';
 import Markdown from '../Markdown';
 
 const renderText = (text) => {
@@ -61,9 +60,9 @@ const renderLocusRow = (title, text, publicationPath) => (
     <td className={styles.publicationRow}>
       {text}
       {' '}
-      <Link to={`../${publicationPath}`}>
+      <a href={`../${publicationPath}`}>
         (See all)
-      </Link>
+      </a>
     </td>
   </tr>
 );
@@ -72,7 +71,39 @@ class Publication extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { subDoc: '' };
+    this.state = {
+      arethusaLoaded: false,
+      subDoc: '',
+    };
+
+    this.setSubdoc = this.setSubdoc.bind(this);
+
+    this.arethusa = new ArethusaWrapper();
+  }
+
+  componentDidMount() {
+    // eslint-disable-next-line no-undef
+    window.document.body.addEventListener('ArethusaLoaded', this.setSubdoc);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { arethusaLoaded } = this.state;
+    const { location } = this.props;
+    const { location: prevLocation } = prevProps;
+
+    if (arethusaLoaded && location !== prevLocation) {
+      this.setSubdoc();
+    }
+  }
+
+  componentWillUnmount() {
+    // eslint-disable-next-line no-undef
+    window.document.body.removeEventListener('ArethusaLoaded', this.setSubdoc);
+  }
+
+  setSubdoc() {
+    const subDoc = this.arethusa.getSubdoc();
+    this.setState({ subDoc, arethusaLoaded: true });
   }
 
   render() {
@@ -85,15 +116,11 @@ class Publication extends Component {
       editors,
       locus,
       publicationLink,
-      license,
       notes,
       xml,
       chunks,
       match,
       location,
-      type,
-      l1,
-      l2,
     } = this.props;
 
     const { subDoc } = this.state;
@@ -106,9 +133,9 @@ class Publication extends Component {
           </span>
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/">
+              <a className="nav-link" href={`${process.env.PUBLIC_URL}/`}>
                 Home
-              </Link>
+              </a>
             </li>
           </ul>
         </Header>
@@ -133,33 +160,21 @@ class Publication extends Component {
               {!!subDoc && renderRow('Reference', subDoc)}
               {!!editors && renderRow('Editors', editors)}
               {!!publicationLink && renderLinkRow('Link', publicationLink)}
-              {!!license && renderRow('License', license)}
               {!!notes && renderMarkdownRow('Notes', notes)}
             </tbody>
           </table>
-          <div>
-            {type === 'alignment' && (
-              <Alignment
-                xml={xml}
-                chunks={chunks}
-                match={match}
-                l1={l1}
-                l2={l2}
-              />
-            )}
-            {type === 'treebank' && (
-              <Treebank
-                xml={xml}
-                chunks={chunks}
-                location={location}
-                match={match}
-                setSubdoc={(s) => this.setState({ subDoc: s })}
-              />
-            )}
+          <div className={styles.treebankWrapper}>
+            <Treebank
+              xml={xml}
+              chunks={chunks}
+              location={location}
+              match={match}
+              arethusa={this.arethusa}
+            />
           </div>
           <div className="pt-1 pb-4 text-right">
             <a href={`${process.env.PUBLIC_URL}/xml/${xml}`} target="_blank" rel="noopener noreferrer">
-              View full XML
+              View XML
             </a>
           </div>
         </div>
@@ -180,26 +195,18 @@ Publication.propTypes = {
   ]).isRequired,
   locus: PropTypes.string.isRequired,
   publicationLink: PropTypes.string,
-  license: PropTypes.string,
   notes: PropTypes.string,
   xml: PropTypes.string.isRequired,
   chunks: chunksType.isRequired,
   match: publicationMatchType.isRequired,
   location: locationType.isRequired,
-  type: PropTypes.string,
-  l1: PropTypes.string,
-  l2: PropTypes.string,
 };
 
 Publication.defaultProps = {
   logo: undefined,
   link: undefined,
   publicationLink: undefined,
-  license: undefined,
   notes: undefined,
-  type: 'treebank',
-  l1: 'L1',
-  l2: 'L2',
 };
 
 export default Publication;

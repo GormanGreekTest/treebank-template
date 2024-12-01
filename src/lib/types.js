@@ -1,11 +1,5 @@
 import {
-  arrayOf,
-  bool,
-  element,
-  number,
-  oneOfType,
-  shape,
-  string,
+  arrayOf, number, shape, string, oneOfType, element,
 } from 'prop-types';
 
 export const chunksType = shape({
@@ -19,12 +13,8 @@ export const sectionType = shape({
   path: string.isRequired,
   xml: string.isRequired,
   link: string,
-  license: string,
   notes: string,
   chunks: chunksType.isRequired,
-  type: string,
-  l1: string,
-  l2: string,
 });
 
 export const publicationType = shape({
@@ -32,16 +22,13 @@ export const publicationType = shape({
   author: string.isRequired,
   work: string.isRequired,
   editors: oneOfType([string, arrayOf(string)]).isRequired,
-  hidden: bool,
-  collapsed: bool,
   sections: arrayOf(sectionType).isRequired,
 });
 
 export const collectionType = shape({
-  title: oneOfType([string, element]),
-  text: string,
-  hidden: bool,
+  title: oneOfType([string, element]).isRequired,
   publications: arrayOf(publicationType),
+  text: string,
 });
 
 export const configType = shape({

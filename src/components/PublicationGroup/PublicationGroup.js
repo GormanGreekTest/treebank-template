@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import { configType } from '../../lib/types';
 
@@ -15,7 +14,6 @@ const renderCollection = (collection) => {
       key={title}
       title={title}
       publications={publications}
-      expanded
     />
   );
 };
@@ -34,9 +32,9 @@ const PublicationGroup = ({
       {title}
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
-          <Link className="nav-link" to="/">
+          <a className="nav-link" href={`${process.env.PUBLIC_URL}/`}>
             Home
-          </Link>
+          </a>
         </li>
       </ul>
     </Header>

@@ -23,13 +23,9 @@ class PublicationDirector extends Component {
             path,
             locus,
             link: publicationLink,
-            license,
             notes,
             xml,
             chunks,
-            type,
-            l1,
-            l2,
           } = section;
 
           argsLookup[path] = {
@@ -41,13 +37,9 @@ class PublicationDirector extends Component {
             editors,
             locus,
             publicationLink,
-            license,
             notes,
             xml,
             chunks,
-            type,
-            l1,
-            l2,
           };
         });
       });

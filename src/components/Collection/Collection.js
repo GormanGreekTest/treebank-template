@@ -1,12 +1,5 @@
 import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
-import {
-  arrayOf,
-  bool,
-  element,
-  oneOfType,
-  string,
-} from 'prop-types';
+import PropTypes from 'prop-types';
 
 import { publicationType } from '../../lib/types';
 
@@ -30,9 +23,9 @@ const renderSection = (section) => {
 
   return (
     <Fragment key={path}>
-      <Link to={`${path}/${start}`}>
+      <a href={`${path}/${start}`}>
         {locus}
-      </Link>
+      </a>
       <br />
     </Fragment>
   );
@@ -50,35 +43,14 @@ const renderEditors = (editors) => {
   return editors;
 };
 
-const renderSections = (path, collapsed, sections) => {
-  if (collapsed) {
-    return (
-      <Fragment key={path}>
-        <Link to={path}>
-          View
-        </Link>
-        <br />
-      </Fragment>
-    );
-  }
-
-  return sections.map((s) => renderSection(s));
-};
-
-const renderRow = (publication, expanded) => {
+const renderRow = (publication) => {
   const {
     path,
     author,
     work,
     editors,
-    hidden,
-    collapsed,
     sections,
   } = publication;
-
-  if (hidden) {
-    return false;
-  }
 
   return (
     <tr className="d-flex" key={path}>
@@ -94,15 +66,13 @@ const renderRow = (publication, expanded) => {
         {renderEditors(editors)}
       </td>
       <td className={`col-4 col-sm-5 col-md-2 col-lg-2 text-right ${styles.locus}`}>
-        {renderSections(path, !expanded && collapsed, sections)}
+        {sections.map((s) => renderSection(s))}
       </td>
     </tr>
   );
 };
 
-const Collection = ({
-  title, publications, text, expanded,
-}) => (
+const Collection = ({ title, publications, text }) => (
   <div className={`container ${styles.collection}`}>
     <div className="row pb-3">
       <div className="col-12">
@@ -120,7 +90,7 @@ const Collection = ({
                 </tr>
               </thead>
               <tbody>
-                {publications.map((p) => renderRow(p, expanded))}
+                {publications.map((p) => renderRow(p))}
               </tbody>
             </>
           )}
@@ -131,16 +101,14 @@ const Collection = ({
 );
 
 Collection.propTypes = {
-  title: oneOfType([string, element]).isRequired,
-  publications: arrayOf(publicationType),
-  text: string,
-  expanded: bool,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
+  publications: PropTypes.arrayOf(publicationType),
+  text: PropTypes.string,
 };
 
 Collection.defaultProps = {
   publications: undefined,
   text: undefined,
-  expanded: false,
 };
 
 export default Collection;

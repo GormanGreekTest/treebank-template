@@ -1,43 +1,31 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Treebank as TB,
-  Sentence,
-  Text,
-  Graph,
-  PartOfSpeech,
-  Xml,
-  Collapse,
-} from 'treebank-react';
-import fetch from 'cross-fetch';
 
 import { chunksType, publicationMatchType, locationType } from '../../lib/types';
 
 import styles from './Treebank.module.css';
 
+import ArethusaWrapper from '../ArethusaWrapper';
 import ControlPanel from '../ControlPanel';
+import TreebankStyles from '../TreebankStyles';
 
-import { parse } from '../../lib/params';
+import { parse, linkParams } from '../../lib/params';
 
 class Treebank extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      loadedXml: false,
-    };
-
     this.additionalArgs = this.additionalArgs.bind(this);
+    this.linkQuery = this.linkQuery.bind(this);
+    this.renderArethusa = this.renderArethusa.bind(this);
   }
 
   componentDidMount() {
-    const { xml } = this.props;
+    this.renderArethusa();
+  }
 
-    fetch(`${process.env.PUBLIC_URL}/xml/${xml}`)
-      .then((response) => response.text())
-      .then((loadedXml) => {
-        this.setState({ loadedXml });
-      });
+  componentDidUpdate() {
+    this.renderArethusa();
   }
 
   additionalArgs() {
@@ -46,61 +34,51 @@ class Treebank extends Component {
     return parse(search);
   }
 
+  linkQuery() {
+    const { location: { search } } = this.props;
+
+    return linkParams(search);
+  }
+
+  renderArethusa() {
+    const {
+      xml,
+      match: { params: { chunk } },
+      arethusa: { render },
+    } = this.props;
+    const additionalArgs = this.additionalArgs();
+
+    render(xml, chunk, additionalArgs);
+  }
+
   render() {
     const { chunks, match } = this.props;
-    const { params: { chunk } } = match;
+    const linkQuery = this.linkQuery();
     const fullQuery = this.additionalArgs();
-
-    const { loadedXml } = this.state;
-    const { setSubdoc } = this.props;
-
-    const { w: highlight } = fullQuery;
-
-    if (!loadedXml) {
-      return (
-        <div>
-          Loading...
-        </div>
-      );
-    }
 
     return (
       <>
         <ControlPanel
           match={match}
           chunks={chunks}
+          fullQuery={fullQuery}
+          linkQuery={linkQuery}
         />
-        <div className="mb-4">
-          <TB treebank={loadedXml}>
-            <Sentence
-              id={chunk}
-              callback={({ sentence: { $: { subdoc } } }) => setSubdoc(subdoc)}
-              highlight={highlight || []}
-            >
-              <div className={styles.text}>
-                <Text />
-              </div>
-              <div className={styles.graph}>
-                <Graph />
-              </div>
-              <PartOfSpeech />
-              <Collapse title="XML">
-                <Xml />
-              </Collapse>
-            </Sentence>
-          </TB>
+        <div className="__artsa">
+          <div id="treebank_container" className={styles.treebankContainer} />
         </div>
+        <TreebankStyles />
       </>
     );
   }
 }
 
 Treebank.propTypes = {
+  arethusa: PropTypes.instanceOf(ArethusaWrapper).isRequired,
   chunks: chunksType.isRequired,
   match: publicationMatchType.isRequired,
   location: locationType.isRequired,
   xml: PropTypes.string.isRequired,
-  setSubdoc: PropTypes.func.isRequired,
 };
 
 export default Treebank;

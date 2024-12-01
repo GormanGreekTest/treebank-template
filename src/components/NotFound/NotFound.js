@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import { configType } from '../../lib/types';
 
@@ -13,9 +12,9 @@ const NotFound = ({ config: { logo, link } }) => (
       </span>
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
-          <Link className="nav-link" to="/">
+          <a className="nav-link" href={`${process.env.PUBLIC_URL}/`}>
             Home
-          </Link>
+          </a>
         </li>
       </ul>
     </Header>
@@ -33,9 +32,9 @@ const NotFound = ({ config: { logo, link } }) => (
       <div className="row col-12 pb-3">
         <div className="col-12 text-center">
           <h2>
-            <Link to="/">
+            <a href={`${process.env.PUBLIC_URL}/`}>
               Return to homepage
-            </Link>
+            </a>
           </h2>
         </div>
       </div>
